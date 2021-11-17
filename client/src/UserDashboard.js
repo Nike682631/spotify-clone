@@ -59,7 +59,6 @@ export default function UserDashboard({ code }) {
                     });
                 }
                 setPlaylists(list);
-                console.log(list)
             }
         };
 
@@ -83,7 +82,9 @@ export default function UserDashboard({ code }) {
                 console.log(response)
         } catch (e) {
             console.log(e)
-        }}
+        }
+        setRefresh(!refresh)
+    }
     }
 
     return (
@@ -104,7 +105,7 @@ export default function UserDashboard({ code }) {
                                         return (
                                             <Dropdown.Item href="#">
                                                 {i.track.name}
-                                                <Button variant="danger" onClick={deleteItem(p.id, i.track.id)}>Delete</Button>
+                                                <Button variant="danger" onClick={() => deleteItem(p.id, i.track.id)}>Delete</Button>
                                             </Dropdown.Item>
                                         )
                                     })}</Dropdown.Menu>
