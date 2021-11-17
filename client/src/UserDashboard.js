@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import useAuth from "./useAuth";
-import { Container, ListGroup, ListGroupItem, Dropdown, Button } from "react-bootstrap";
+import { Container, ListGroup, ListGroupItem, Dropdown, Button, Image } from "react-bootstrap";
 import SpotifyWebApi from "spotify-web-api-node";
 import axios from "axios";
 
@@ -44,6 +44,7 @@ export default function UserDashboard({ code }) {
 
             if (response2.status === 200) {
                 let list = [];
+                console.log(response2)
                 for (const item of response2.data.items) {
                     const response3 = await axios.get(
                         URL + "playlists/" + item.id + "/tracks",
@@ -55,7 +56,8 @@ export default function UserDashboard({ code }) {
                     );
                     list.push({
                         name: item.name,
-                        items: response3.data.items
+                        items: response3.data.items,
+                        url: item.images[2].url
                     });
                 }
                 setPlaylists(list);
@@ -67,7 +69,7 @@ export default function UserDashboard({ code }) {
 
 
     async function deleteItem(pid, id) {
-        if (await window.confirm('Do you want to restore this item?')) {
+        if (window.confirm('Do you want to restore this item?')) {
         try {
             const response = await axios.delete(URL + "/playlists/" + pid + "/tracks", {
                 headers: {
@@ -100,7 +102,7 @@ export default function UserDashboard({ code }) {
                         return (
                             <ListGroupItem>
                                 <Dropdown>
-                                    <Dropdown.Toggle>{p.name}</Dropdown.Toggle>
+                                    <Dropdown.Toggle><Image src = {p.url} roundedCircle />{p.name}</Dropdown.Toggle>
                                     <Dropdown.Menu>{p.items.map((i) => {
                                         return (
                                             <Dropdown.Item href="#">
