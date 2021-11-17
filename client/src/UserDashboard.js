@@ -74,7 +74,7 @@ export default function UserDashboard({ code }) {
         if (window.confirm('Do you want to restore this item?')) {
             try {
                 const response = await spotifyApi.removeTracksFromPlaylist(pid, [{
-                    uri: id
+                    uri: 'spotify:track:'+id
                 }])
                 console.log(response)
             } catch (e) {
