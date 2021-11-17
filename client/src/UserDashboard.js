@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import useAuth from "./useAuth";
-import { Container, ListGroup, ListGroupItem, Dropdown, Button, Image } from "react-bootstrap";
+import { Container, ListGroup, ListGroupItem, Dropdown, Button, Image, Row, Col } from "react-bootstrap";
+import Accordion from 'react-bootstrap/Accordion'
 import SpotifyWebApi from "spotify-web-api-node";
 import axios from "axios";
 
@@ -70,23 +71,23 @@ export default function UserDashboard({ code }) {
 
     async function deleteItem(pid, id) {
         if (window.confirm('Do you want to restore this item?')) {
-        try {
-            const response = await axios.delete(URL + "/playlists/" + pid + "/tracks", {
-                headers: {
-                    Authorization: "Bearer " + accessToken
-                },
-                body: {
-                    tracks: [id]
-                }
+            try {
+                const response = await axios.delete(URL + "/playlists/" + pid + "/tracks", {
+                    headers: {
+                        Authorization: "Bearer " + accessToken
+                    },
+                    body: {
+                        tracks: [id]
+                    }
 
-            });
-            if (response.status == 200)
-                console.log(response)
-        } catch (e) {
-            console.log(e)
+                });
+                if (response.status == 200)
+                    console.log(response)
+            } catch (e) {
+                console.log(e)
+            }
+            setRefresh(!refresh)
         }
-        setRefresh(!refresh)
-    }
     }
 
     return (
@@ -97,26 +98,31 @@ export default function UserDashboard({ code }) {
                 <div>Email: {userEmail}</div>
             </div>
             <div>
-                <ListGroup>
-                    {playlists.map((p) => {
-                        return (
-                            <ListGroupItem>
-                                <Dropdown>
-                                    <Dropdown.Toggle><Image src = {p.url} roundedCircle />{p.name}</Dropdown.Toggle>
-                                    <Dropdown.Menu>{p.items.map((i) => {
-                                        return (
-                                            <Dropdown.Item href="#">
-                                                {i.track.name}
-                                                <Button variant="danger" onClick={() => deleteItem(p.id, i.track.id)}>Delete</Button>
-                                            </Dropdown.Item>
-                                        )
-                                    })}</Dropdown.Menu>
-                                </Dropdown>
-
-                            </ListGroupItem>
-                        );
-                    })}
-                </ListGroup>
+                {playlists.map((p) => {
+                    return (
+                        <Accordion>
+                            <Accordion.Item>
+                                <Accordion.Header as='h6'>
+                                    <Image src={p.url} roundedCircle />{p.name}
+                                </Accordion.Header>
+                                <Accordion.Body>
+                                    <ListGroup>
+                                        {p.items.map((i) => {
+                                            return (
+                                                <ListGroupItem>
+                                                    <Row>
+                                                        <Col>{i.track.name}</Col>
+                                                        <Col><Button variant="danger" onClick={() => deleteItem(p.id, i.track.id)}>Delete</Button> </Col>
+                                                    </Row>
+                                                </ListGroupItem>
+                                            )
+                                        })}
+                                    </ListGroup>
+                                </Accordion.Body>
+                            </Accordion.Item>
+                        </Accordion>
+                    );
+                })}
             </div>
         </Container>
     );
