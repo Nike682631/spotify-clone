@@ -58,7 +58,8 @@ export default function UserDashboard({ code }) {
                     list.push({
                         name: item.name,
                         items: response3.data.items,
-                        url: item.images[2].url
+                        url: item.images[2].url,
+                        id: item.id
                     });
                 }
                 setPlaylists(list);
@@ -72,17 +73,10 @@ export default function UserDashboard({ code }) {
     async function deleteItem(pid, id) {
         if (window.confirm('Do you want to restore this item?')) {
             try {
-                const response = await axios.delete(URL + "/playlists/" + pid + "/tracks", {
-                    headers: {
-                        Authorization: "Bearer " + accessToken
-                    },
-                    body: {
-                        tracks: [id]
-                    }
-
-                });
-                if (response.status == 200)
-                    console.log(response)
+                const response = await spotifyApi.removeTracksFromPlaylist(pid, [{
+                    uri: id
+                }])
+                console.log(response)
             } catch (e) {
                 console.log(e)
             }
